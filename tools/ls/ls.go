@@ -11,7 +11,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"syscall"
 
 	"github.com/synseqack/aict/internal/detect"
 	"github.com/synseqack/aict/internal/format"
@@ -440,22 +439,51 @@ func formatPermissions(mode os.FileMode, isDir bool, isSymlink bool) string {
 }
 
 func lookupOwner(info fs.FileInfo) (owner, group string) {
-	sys, ok := info.Sys().(*syscall.Stat_t)
-	if !ok {
+	sysInfo := info.Sys()
+	if sysInfo == nil {
 		return "unknown", "unknown"
 	}
 
+	uid := getUID(sysInfo)
+	gid := getGID(sysInfo)
+
 	owner = "unknown"
-	if u, err := user.LookupId(strconv.FormatUint(uint64(sys.Uid), 10)); err == nil {
+	if u, err := user.LookupId(strconv.FormatUint(uint64(uid), 10)); err == nil {
 		owner = u.Username
+	} else {
+		owner = strconv.FormatUint(uint64(uid), 10)
 	}
 
 	group = "unknown"
-	if g, err := user.LookupGroupId(strconv.FormatUint(uint64(sys.Gid), 10)); err == nil {
+	if g, err := user.LookupGroupId(strconv.FormatUint(uint64(gid), 10)); err == nil {
 		group = g.Name
+	} else {
+		group = strconv.FormatUint(uint64(gid), 10)
 	}
 
 	return owner, group
+}
+
+func getUID(sysInfo any) uint32 {
+	switch v := sysInfo.(type) {
+	case interface{ Uid() uint32 }:
+		return v.Uid()
+	case interface{ UID() uint32 }:
+		return v.UID()
+	default:
+		return 0
+	}
+}
+
+func getGID(sysInfo any) uint32 {
+	switch v := sysInfo.(type) {
+	case interface{ Gid() uint32 }:
+		return v.Gid()
+	case interface{ GID() uint32 }:
+		return v.GID()
+	default:
+		return 0
+	}
 }
 
 func outputResult(result *LSResult, cfg Config) error {

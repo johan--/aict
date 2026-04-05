@@ -8,7 +8,6 @@ import (
 	"os/user"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/synseqack/aict/internal/detect"
@@ -158,32 +157,52 @@ func statPath(path string, cfg Config) (*StatResult, error) {
 		Timestamp: meta.Now(),
 	}
 
-	sys, ok := info.Sys().(*syscall.Stat_t)
-	if ok {
-		result.Inode = sys.Ino
-		result.Links = int(sys.Nlink)
-		result.Device = sys.Dev
-		result.UID = sys.Uid
-		result.GID = sys.Gid
+	sysInfo := info.Sys()
+	if sysInfo != nil {
+		result.Inode = getIno(sysInfo)
+		result.Links = int(getNlink(sysInfo))
+		result.Device = getDev(sysInfo)
+		result.UID = getUID(sysInfo)
+		result.GID = getGID(sysInfo)
 
-		if owner, err := user.LookupId(strconv.FormatUint(uint64(sys.Uid), 10)); err == nil {
+		if owner, err := user.LookupId(strconv.FormatUint(uint64(result.UID), 10)); err == nil {
 			result.Owner = owner.Username
 		} else {
 			result.Owner = "unknown"
 		}
 
-		if group, err := user.LookupGroupId(strconv.FormatUint(uint64(sys.Gid), 10)); err == nil {
+		if group, err := user.LookupGroupId(strconv.FormatUint(uint64(result.GID), 10)); err == nil {
 			result.Group = group.Name
 		} else {
 			result.Group = "unknown"
 		}
 
-		result.Atime = sys.Atim.Sec
-		result.AtimeAgoS = meta.AgoSeconds(sys.Atim.Sec)
-		result.Mtime = sys.Mtim.Sec
-		result.MtimeAgoS = meta.AgoSeconds(sys.Mtim.Sec)
-		result.Ctime = sys.Ctim.Sec
-		result.CtimeAgoS = meta.AgoSeconds(sys.Ctim.Sec)
+		sec := getATimSec(sysInfo)
+		if sec > 0 {
+			result.Atime = sec
+			result.AtimeAgoS = meta.AgoSeconds(sec)
+		} else {
+			result.Atime = info.ModTime().Unix()
+			result.AtimeAgoS = meta.AgoSeconds(info.ModTime().Unix())
+		}
+
+		sec = getMTimSec(sysInfo)
+		if sec > 0 {
+			result.Mtime = sec
+			result.MtimeAgoS = meta.AgoSeconds(sec)
+		} else {
+			result.Mtime = info.ModTime().Unix()
+			result.MtimeAgoS = meta.AgoSeconds(info.ModTime().Unix())
+		}
+
+		sec = getCTimSec(sysInfo)
+		if sec > 0 {
+			result.Ctime = sec
+			result.CtimeAgoS = meta.AgoSeconds(sec)
+		} else {
+			result.Ctime = info.ModTime().Unix()
+			result.CtimeAgoS = meta.AgoSeconds(info.ModTime().Unix())
+		}
 
 		result.Birth = 0
 		result.BirthAgoS = 0
@@ -318,4 +337,102 @@ func writePlain(w io.Writer, result *StatResult) error {
 	fmt.Fprintf(w, "Change: %s\n", time.Unix(result.Ctime, 0).Format(time.RubyDate))
 
 	return nil
+}
+
+func getIno(sysInfo any) uint64 {
+	switch v := sysInfo.(type) {
+	case interface{ Ino() uint64 }:
+		return v.Ino()
+	case interface{ Ino() uint32 }:
+		return uint64(v.Ino())
+	default:
+		return 0
+	}
+}
+
+func getNlink(sysInfo any) uint64 {
+	switch v := sysInfo.(type) {
+	case interface{ Nlink() uint64 }:
+		return v.Nlink()
+	case interface{ Nlink() uint32 }:
+		return uint64(v.Nlink())
+	default:
+		return 0
+	}
+}
+
+func getDev(sysInfo any) uint64 {
+	switch v := sysInfo.(type) {
+	case interface{ Dev() uint64 }:
+		return v.Dev()
+	default:
+		return 0
+	}
+}
+
+func getUID(sysInfo any) uint32 {
+	switch v := sysInfo.(type) {
+	case interface{ Uid() uint32 }:
+		return v.Uid()
+	case interface{ UID() uint32 }:
+		return v.UID()
+	default:
+		return 0
+	}
+}
+
+func getGID(sysInfo any) uint32 {
+	switch v := sysInfo.(type) {
+	case interface{ Gid() uint32 }:
+		return v.Gid()
+	case interface{ GID() uint32 }:
+		return v.GID()
+	default:
+		return 0
+	}
+}
+
+func getATimSec(sysInfo any) int64 {
+	switch v := sysInfo.(type) {
+	case interface {
+		Atim() interface{ Sec() int64 }
+	}:
+		return v.Atim().Sec()
+	case interface {
+		Atime() interface{ Sec() int64 }
+	}:
+		return v.Atime().Sec()
+	default:
+		return 0
+	}
+}
+
+func getMTimSec(sysInfo any) int64 {
+	switch v := sysInfo.(type) {
+	case interface {
+		Mtim() interface{ Sec() int64 }
+	}:
+		return v.Mtim().Sec()
+	case interface {
+		Mtime() interface{ Sec() int64 }
+	}:
+		return v.Mtime().Sec()
+	default:
+		return 0
+	}
+}
+
+func getCTimSec(sysInfo any) int64 {
+	switch v := sysInfo.(type) {
+	case interface {
+		Ctim() interface{ Sec() int64 }
+	}:
+		return v.Ctim().Sec()
+	case interface {
+		Ctime() interface{ Sec() int64 }
+	}:
+		return v.Ctime().Sec()
+	default:
+		return 0
+	}
 }

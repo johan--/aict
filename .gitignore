@@ -1,5 +1,6 @@
 # Binaries
 aict
+aict-mcp
 *.exe
 *.exe~
 *.dll
