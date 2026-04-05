@@ -11,7 +11,7 @@
 
 ### Tasks
 
-- [ ] Initialize Go module: `go mod init github.com/ermcy/aict`
+- [ ] Initialize Go module: `go mod init github.com/synseqack/aict`
 - [ ] Create directory structure per spec:
   ```
   cmd/aict/main.go
@@ -327,7 +327,7 @@ done
 
 ### 3.4 Packaging
 
-- [ ] `go install github.com/ermcy/aict@latest` works
+- [ ] `go install github.com/synseqack/aict@latest` works
 - [ ] GitHub Actions CI:
   - `go test ./...` on push
   - `go vet ./...` on push

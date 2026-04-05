@@ -83,11 +83,11 @@ import (
     "os"
     "time"
 
-    "github.com/ermcy/aict/internal/detect"
-    "github.com/ermcy/aict/internal/format"
-    "github.com/ermcy/aict/internal/meta"
-    "github.com/ermcy/aict/internal/path"
-    "github.com/ermcy/aict/internal/xmlout"
+    "github.com/synseqack/aict/internal/detect"
+    "github.com/synseqack/aict/internal/format"
+    "github.com/synseqack/aict/internal/meta"
+    "github.com/synseqack/aict/internal/path"
+    "github.com/synseqack/aict/internal/xmlout"
 )
 
 type Config struct {
