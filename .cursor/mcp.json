@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "aict": {
+      "command": "aict-mcp",
+      "args": []
+    }
+  }
+}

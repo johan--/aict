@@ -29,7 +29,7 @@
 
 Before implementing any tool:
 1. Read `ROADMAP.md` for the phase and task you're working on
-2. Read `ai-coreutils-roadmap.md` for the full XML schema spec of that tool
+2. Read `ROADMAP.md` for the full XML schema spec of that tool
 3. Read existing tools in `tools/` to match patterns
 4. Read `internal/` packages for shared utilities
 
@@ -307,7 +307,7 @@ AICT_XML=1 ./aict toolname [args] | xmllint --noout -
 ./aict grep "neverexists" . --xml
 # → Should output valid XML with zero counts
 
-# 9. Output matches spec in ai-coreutils-roadmap.md
+# 9. Output matches spec in ROADMAP.md
 # → Compare XML structure attribute by attribute
 ```
 
@@ -355,7 +355,7 @@ AICT_XML=1 ./aict toolname [args] | xmllint --noout -
 
 ## When in Doubt
 
-1. Check `ai-coreutils-roadmap.md` for the XML schema spec
+1. Check `ROADMAP.md` for the XML schema spec
 2. Check `ROADMAP.md` for the implementation phase and acceptance criteria
 3. Check existing tools in `tools/` for patterns
 4. If still unsure, ask before implementing
