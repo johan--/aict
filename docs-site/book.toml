@@ -1,0 +1,22 @@
+[book]
+title = "aict — Coreutils for AI Agents"
+authors = ["synseqack"]
+description = "Documentation for aict: Unix coreutils rebuilt for AI agents with structured XML/JSON output."
+language = "en"
+src = "src"
+
+[output.html]
+git-repository-url = "https://github.com/synseqack/aict"
+edit-url-template = "https://github.com/synseqack/aict/edit/main/docs-site/{path}"
+site-url = "/aict/"
+default-theme = "navy"
+preferred-dark-theme = "navy"
+smart-punctuation = true
+
+[output.html.fold]
+enable = true
+level = 0
+
+[output.html.search]
+enable = true
+limit-results = 30

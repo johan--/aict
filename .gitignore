@@ -33,4 +33,7 @@ Thumbs.db
 dist/
 build/
 
+# mdBook output
+docs-site/book/
+
 ROADMAP.md
