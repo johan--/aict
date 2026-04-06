@@ -35,5 +35,6 @@ build/
 
 # mdBook output
 docs-site/book/
+docs-site/src/tools-reference.md
 
 ROADMAP.md

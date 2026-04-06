@@ -13,11 +13,11 @@ If you discover a security vulnerability, please open an issue with the `securit
 
 Do not report security vulnerabilities through public GitHub issues.
 
-## Note on AI-Generated Code
+## Note on Code Origin
 
-This project was built entirely by AI tools. While we strive for secure code, AI-generated software may contain unexpected vulnerabilities. We recommend:
+This project was built using AI development tools. We recommend:
 - Audit the code before using in production
-- Report any issues you find so they can be addressed
+- Report any issues you find
 - Use proper sandboxing regardless
 
 ## Scope

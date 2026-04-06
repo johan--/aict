@@ -1,0 +1,18 @@
+{
+  "manifest_version": "0.3",
+  "name": "aict",
+  "description": "CLI tools with XML/JSON output for AI agents",
+  "version": "1.0.0",
+  "privacy_policies": [
+    {
+      "url": "https://github.com/synseqack/aict/blob/main/PRIVACY.md",
+      "policy": "aict is read-only and does not collect any user data"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/synseqack/aict"
+  },
+  "homepage": "https://github.com/synseqack/aict",
+  "issues_url": "https://github.com/synseqack/aict/issues"
+}

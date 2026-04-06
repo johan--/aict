@@ -82,7 +82,8 @@ func GenerateSchema(name string, description string, configPtr interface{}) Tool
 		field := t.Field(i)
 
 		flagTag := field.Tag.Get("flag")
-		if flagTag == "" {
+		_, hasFlag := field.Tag.Lookup("flag")
+		if !hasFlag {
 			continue
 		}
 
