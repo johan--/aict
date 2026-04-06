@@ -14,6 +14,7 @@ import (
 
 func init() {
 	tool.Register("dirname", Run)
+	tool.RegisterMeta("dirname", tool.GenerateSchema("dirname", "Print directory portion of file paths", Config{}))
 }
 
 type Config struct {

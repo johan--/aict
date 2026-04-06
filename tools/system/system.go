@@ -16,6 +16,7 @@ import (
 
 func init() {
 	tool.Register("system", Run)
+	tool.RegisterMeta("system", tool.GenerateSchema("system", "Display system information including user, OS, and runtime details", Config{}))
 }
 
 type Config struct {

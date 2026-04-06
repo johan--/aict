@@ -16,6 +16,7 @@ import (
 
 func init() {
 	tool.Register("env", Run)
+	tool.RegisterMeta("env", tool.GenerateSchema("env", "Display environment variables with types and redaction", Config{}))
 }
 
 var secretKeywords = []string{

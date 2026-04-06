@@ -18,14 +18,15 @@ import (
 
 func init() {
 	tool.Register("tail", Run)
+	tool.RegisterMeta("tail", tool.GenerateSchema("tail", "Display the last N lines of a file", Config{}))
 }
 
 type Config struct {
-	Lines     int
-	Bytes     int
+	Lines     int `flag:"" desc:"Number of lines to show"`
+	Bytes     int `flag:"" desc:"Number of bytes to show"`
 	LinesFlag bool
 	BytesFlag bool
-	Follow    bool
+	Follow    bool `flag:"" desc:"Follow file updates in real-time"`
 	XML       bool
 	JSON      bool
 	Plain     bool

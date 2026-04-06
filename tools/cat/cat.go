@@ -20,10 +20,11 @@ import (
 
 func init() {
 	tool.Register("cat", Run)
+	tool.RegisterMeta("cat", tool.GenerateSchema("cat", "Read and output file contents with metadata", Config{}))
 }
 
 type Config struct {
-	LineNumbers bool
+	LineNumbers bool `flag:"" desc:"Show line numbers"`
 	XML         bool
 	JSON        bool
 	Plain       bool

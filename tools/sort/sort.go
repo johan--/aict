@@ -17,15 +17,16 @@ import (
 
 func init() {
 	tool.Register("sort", Run)
+	tool.RegisterMeta("sort", tool.GenerateSchema("sort", "Sort lines of text files", Config{}))
 }
 
 type Config struct {
-	Numeric    bool
-	Reverse    bool
-	Key        int
-	Delimiter  string
-	OutputFile string
-	Unique     bool
+	Numeric    bool   `flag:"" desc:"Sort numerically"`
+	Reverse    bool   `flag:"" desc:"Sort in reverse order"`
+	Key        int    `flag:"" desc:"Sort by field number (1-based)"`
+	Delimiter  string `flag:"" desc:"Field delimiter (default: tab)"`
+	OutputFile string `flag:"" desc:"Write output to file"`
+	Unique     bool   `flag:"" desc:"Remove duplicate lines"`
 	XML        bool
 	JSON       bool
 	Plain      bool

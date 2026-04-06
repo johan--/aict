@@ -15,12 +15,13 @@ import (
 
 func init() {
 	tool.Register("tr", Run)
+	tool.RegisterMeta("tr", tool.GenerateSchema("tr", "Translate, squeeze, or delete characters from stdin", Config{}))
 }
 
 type Config struct {
-	Delete    bool
-	Squeeze   bool
-	Translate bool
+	Delete    bool `flag:"" desc:"Delete characters in set1"`
+	Squeeze   bool `flag:"" desc:"Squeeze repeated characters"`
+	Translate bool `flag:"" desc:"Translate characters"`
 	Set1      string
 	Set2      string
 	XML       bool

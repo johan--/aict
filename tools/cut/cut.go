@@ -16,13 +16,14 @@ import (
 
 func init() {
 	tool.Register("cut", Run)
+	tool.RegisterMeta("cut", tool.GenerateSchema("cut", "Cut out sections of each line from files", Config{}))
 }
 
 type Config struct {
-	Fields     string
-	Delimiter  string
-	Characters string
-	OnlyDelim  bool
+	Fields     string `flag:"" desc:"Select fields (e.g., 1,3-5)"`
+	Delimiter  string `flag:"" desc:"Field delimiter (default: tab)"`
+	Characters string `flag:"" desc:"Select characters (e.g., 1-10)"`
+	OnlyDelim  bool   `flag:"" desc:"Only print lines with delimiter"`
 	XML        bool
 	JSON       bool
 	Plain      bool

@@ -19,16 +19,17 @@ import (
 
 func init() {
 	tool.Register("find", Run)
+	tool.RegisterMeta("find", tool.GenerateSchema("find", "Find files by name, type, or modification time", Config{}))
 }
 
 type Config struct {
-	Name     string
-	Type     string
-	MTime    int
-	Size     int64
-	MaxDepth int
-	Invert   bool
-	Or       bool
+	Name     string `flag:"" desc:"File name pattern (supports * and ?)"`
+	Type     string `flag:"" desc:"File type: f (regular), d (directory), l (symlink)"`
+	MTime    int    `flag:"" desc:"Modified within N days"`
+	Size     int64  `flag:"" desc:"File size in bytes"`
+	MaxDepth int    `flag:"" desc:"Maximum directory depth"`
+	Invert   bool   `flag:"" desc:"Invert match conditions"`
+	Or       bool   `flag:"" desc:"OR between conditions"`
 	XML      bool
 	JSON     bool
 	Plain    bool

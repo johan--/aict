@@ -21,25 +21,26 @@ import (
 
 func init() {
 	tool.Register("grep", Run)
+	tool.RegisterMeta("grep", tool.GenerateSchema("grep", "Search for patterns in files with line numbers and context", Config{}))
 }
 
 type Config struct {
-	Pattern          string
-	Recursive        bool
-	LineNumbers      bool
-	FilesWithMatches bool
-	CaseInsensitive  bool
-	WordMatch        bool
-	AfterContext     int
-	BeforeContext    int
-	ContextLines     int
-	CountOnly        bool
-	InvertMatch      bool
-	ExtendedRegex    bool
-	FixedStrings     bool
-	Include          string
-	ExcludeDir       string
-	MaxCount         int
+	Pattern          string `flag:"" desc:"Search pattern (regex or literal)"`
+	Recursive        bool   `flag:"" desc:"Search recursively in directories"`
+	LineNumbers      bool   `flag:"" desc:"Show line numbers"`
+	FilesWithMatches bool   `flag:"" desc:"Show only file names with matches"`
+	CaseInsensitive  bool   `flag:"" desc:"Case insensitive search"`
+	WordMatch        bool   `flag:"" desc:"Match whole words only"`
+	AfterContext     int    `flag:"" desc:"Number of context lines after match"`
+	BeforeContext    int    `flag:"" desc:"Number of context lines before match"`
+	ContextLines     int    `flag:"" desc:"Number of context lines around match"`
+	CountOnly        bool   `flag:"" desc:"Count matches only, don't show content"`
+	InvertMatch      bool   `flag:"" desc:"Invert match - show non-matching lines"`
+	ExtendedRegex    bool   `flag:"" desc:"Use extended regular expressions"`
+	FixedStrings     bool   `flag:"" desc:"Treat pattern as literal string"`
+	Include          string `flag:"" desc:"Include files matching pattern (e.g., *.go)"`
+	ExcludeDir       string `flag:"" desc:"Exclude directories matching pattern"`
+	MaxCount         int    `flag:"" desc:"Stop after N matches"`
 	XML              bool
 	JSON             bool
 	Plain            bool
@@ -421,14 +422,18 @@ func findMatches(path string, re *regexp.Regexp, cfg Config) []GrepMatch {
 
 	var matches []GrepMatch
 	var beforeLines []string
-	scanner := bufio.NewScanner(f)
+	reader := bufio.NewReaderSize(f, 128*1024)
 	lineNum := 0
 	matchCount := 0
 	var offset int64
 
-	for scanner.Scan() {
+	for {
+		line, err := reader.ReadString('\n')
+		if err != nil {
+			break
+		}
 		lineNum++
-		line := scanner.Text()
+		line = strings.TrimSuffix(line, "\n")
 
 		if cfg.InvertMatch {
 			if !re.MatchString(line) {
@@ -464,11 +469,12 @@ func findMatches(path string, re *regexp.Regexp, cfg Config) []GrepMatch {
 					if cfg.ContextLines > 0 || cfg.AfterContext > 0 {
 						var afterLines []string
 						for i := 0; i < cfg.ContextLines || (i < cfg.AfterContext); i++ {
-							if !scanner.Scan() {
+							l, err := reader.ReadString('\n')
+							if err != nil {
 								break
 							}
 							lineNum++
-							afterLines = append(afterLines, scanner.Text())
+							afterLines = append(afterLines, strings.TrimSuffix(l, "\n"))
 						}
 						if len(afterLines) > 0 {
 							after = strings.Join(afterLines, "\n")
@@ -491,13 +497,6 @@ func findMatches(path string, re *regexp.Regexp, cfg Config) []GrepMatch {
 						break
 					}
 					matchCount++
-				}
-			} else {
-				if cfg.ContextLines > 0 || cfg.BeforeContext > 0 {
-					beforeLines = append(beforeLines, line)
-					if len(beforeLines) > cfg.ContextLines+cfg.BeforeContext {
-						beforeLines = beforeLines[1:]
-					}
 				}
 			}
 		}

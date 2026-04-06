@@ -19,14 +19,18 @@ import (
 
 func init() {
 	tool.Register("checksums", Run)
+	tool.RegisterMeta("checksums", tool.GenerateSchema("checksums", "Calculate MD5, SHA1, and SHA256 checksums for files", Config{}))
 	tool.Register("md5sum", RunMD5)
+	tool.RegisterMeta("md5sum", tool.GenerateSchema("md5sum", "Calculate MD5 checksum for files", Config{}))
 	tool.Register("sha256sum", RunSHA256)
+	tool.RegisterMeta("sha256sum", tool.GenerateSchema("sha256sum", "Calculate SHA256 checksum for files", Config{}))
 	tool.Register("sha1sum", RunSHA1)
+	tool.RegisterMeta("sha1sum", tool.GenerateSchema("sha1sum", "Calculate SHA1 checksum for files", Config{}))
 }
 
 type Config struct {
-	Algorithms []string
-	Verify     bool
+	Algorithms []string `flag:"" desc:"Hash algorithm (md5, sha1, sha256)"`
+	Verify     bool     `flag:"" desc:"Verify checksums from file"`
 	XML        bool
 	JSON       bool
 	Plain      bool

@@ -17,13 +17,14 @@ import (
 
 func init() {
 	tool.Register("du", Run)
+	tool.RegisterMeta("du", tool.GenerateSchema("du", "Estimate disk usage of directories and files", Config{}))
 }
 
 type Config struct {
-	Summarize bool
-	HumanSize bool
-	All       bool
-	MaxDepth  int
+	Summarize bool `flag:"" desc:"Show only total for each argument"`
+	HumanSize bool `flag:"" desc:"Show sizes in human-readable format"`
+	All       bool `flag:"" desc:"Count all files, not just directories"`
+	MaxDepth  int  `flag:"" desc:"Maximum depth to show entries"`
 	XML       bool
 	JSON      bool
 	Plain     bool

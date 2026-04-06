@@ -18,13 +18,14 @@ import (
 
 func init() {
 	tool.Register("ps", Run)
+	tool.RegisterMeta("ps", tool.GenerateSchema("ps", "List running processes with details", Config{}))
 }
 
 type Config struct {
-	All    bool
-	Full   bool
-	PID    string
-	SortBy string
+	All    bool   `flag:"" desc:"Show all processes"`
+	Full   bool   `flag:"" desc:"Show full command details"`
+	PID    string `flag:"" desc:"Filter by PID"`
+	SortBy string `flag:"" desc:"Sort by field (e.g., pid, cpu, mem)"`
 	XML    bool
 	JSON   bool
 	Plain  bool

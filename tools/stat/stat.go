@@ -20,10 +20,11 @@ import (
 
 func init() {
 	tool.Register("stat", Run)
+	tool.RegisterMeta("stat", tool.GenerateSchema("stat", "Display detailed file metadata including timestamps, permissions, and ownership", Config{}))
 }
 
 type Config struct {
-	FollowSymlinks bool
+	FollowSymlinks bool `flag:"" desc:"Follow symlinks and show target file info"`
 	XML            bool
 	JSON           bool
 	Plain          bool

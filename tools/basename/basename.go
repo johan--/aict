@@ -15,6 +15,7 @@ import (
 
 func init() {
 	tool.Register("basename", Run)
+	tool.RegisterMeta("basename", tool.GenerateSchema("basename", "Print filename portion of file paths", Config{}))
 }
 
 type Config struct {

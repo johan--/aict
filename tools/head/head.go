@@ -18,11 +18,12 @@ import (
 
 func init() {
 	tool.Register("head", Run)
+	tool.RegisterMeta("head", tool.GenerateSchema("head", "Display the first N lines of a file", Config{}))
 }
 
 type Config struct {
-	Lines     int
-	Bytes     int
+	Lines     int `flag:"" desc:"Number of lines to show"`
+	Bytes     int `flag:"" desc:"Number of bytes to show"`
 	LinesFlag bool
 	BytesFlag bool
 	XML       bool

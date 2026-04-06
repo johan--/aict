@@ -15,13 +15,14 @@ import (
 
 func init() {
 	tool.Register("uniq", Run)
+	tool.RegisterMeta("uniq", tool.GenerateSchema("uniq", "Report or filter out repeated lines", Config{}))
 }
 
 type Config struct {
-	Count      bool
-	Duplicates bool
-	Unique     bool
-	IgnoreCase bool
+	Count      bool `flag:"" desc:"Prefix lines by number of occurrences"`
+	Duplicates bool `flag:"" desc:"Only show duplicate lines"`
+	Unique     bool `flag:"" desc:"Only show unique lines"`
+	IgnoreCase bool `flag:"" desc:"Case insensitive comparison"`
 	XML        bool
 	JSON       bool
 	Plain      bool

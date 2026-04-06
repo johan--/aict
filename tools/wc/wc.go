@@ -19,14 +19,15 @@ import (
 
 func init() {
 	tool.Register("wc", Run)
+	tool.RegisterMeta("wc", tool.GenerateSchema("wc", "Count lines, words, and bytes in files", Config{}))
 }
 
 type Config struct {
-	Lines    bool
-	Words    bool
-	Bytes    bool
-	MaxLines bool
-	AllFiles bool
+	Lines    bool `flag:"" desc:"Count lines"`
+	Words    bool `flag:"" desc:"Count words"`
+	Bytes    bool `flag:"" desc:"Count bytes"`
+	MaxLines bool `flag:"" desc:"Show maximum line length"`
+	AllFiles bool `flag:"" desc:"Count all files including hidden"`
 	XML      bool
 	JSON     bool
 	Plain    bool

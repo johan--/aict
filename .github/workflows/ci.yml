@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Build
+        run: go build -o aict ./main.go
+
+      - name: Test
+        run: go test ./...
+
+      - name: Vet
+        run: go vet ./...
+
+  test-cross-platform:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          ext=""
+          if [ "$GOOS" = "windows" ]; then
+            ext=".exe"
+          fi
+          go build -o aict${ext} ./main.go
+
+  test-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Build aict
+        run: go build -o aict ./main.go
+
+      - name: Build aict-mcp
+        run: go build -o aict-mcp ./cmd/mcp
+
+      - name: Test binary
+        run: |
+          ./aict --help
+          ./aict ls .
+          ./aict cat README.md
+          ./aict grep "aict" . -r
+
+  release:
+    needs: [test, test-linux]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25'
+
+      - name: Build releases
+        run: |
+          mkdir -p releases
+          for os in linux darwin windows; do
+            for arch in amd64 arm64; do
+              ext=""
+              if [ "$os" = "windows" ]; then
+                ext=".exe"
+              fi
+              GOOS=$os GOARCH=$arch go build -o aict-${os}-${arch}${ext} ./main.go
+              cp aict-${os}-${arch}${ext} releases/
+            done
+          done
+
+      - name: Create checksums
+        run: |
+          cd releases
+          sha256sum * > checksums.txt
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: releases/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

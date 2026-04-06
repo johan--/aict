@@ -12,10 +12,12 @@ import (
 	_ "github.com/synseqack/aict/tools/df"
 	_ "github.com/synseqack/aict/tools/diff"
 	_ "github.com/synseqack/aict/tools/dirname"
+	_ "github.com/synseqack/aict/tools/doctor"
 	_ "github.com/synseqack/aict/tools/du"
 	_ "github.com/synseqack/aict/tools/env"
 	_ "github.com/synseqack/aict/tools/file"
 	_ "github.com/synseqack/aict/tools/find"
+	_ "github.com/synseqack/aict/tools/git"
 	_ "github.com/synseqack/aict/tools/grep"
 	_ "github.com/synseqack/aict/tools/head"
 	_ "github.com/synseqack/aict/tools/ls"
@@ -64,6 +66,9 @@ func run(args []string) error {
 }
 
 func printUsage() {
+	meta := tool.AllMeta()
+	tools := tool.All()
+
 	fmt.Print(`aict - Your command line, built for AI
 
 Usage: aict <command> [flags] [arguments]
@@ -71,9 +76,12 @@ Usage: aict <command> [flags] [arguments]
 Commands:
 `)
 
-	tools := tool.All()
 	for name := range tools {
-		fmt.Printf("  %s\n", name)
+		if m, ok := meta[name]; ok {
+			fmt.Printf("  %-12s %s\n", name, m.Description)
+		} else {
+			fmt.Printf("  %s\n", name)
+		}
 	}
 
 	fmt.Print(`

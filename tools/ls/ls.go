@@ -22,14 +22,15 @@ import (
 
 func init() {
 	tool.Register("ls", Run)
+	tool.RegisterMeta("ls", tool.GenerateSchema("ls", "List directory contents with file metadata including permissions, size, and modification time", Config{}))
 }
 
 type Config struct {
-	All       bool
-	AlmostAll bool
-	SortTime  bool
-	Reverse   bool
-	Recursive bool
+	All       bool `flag:"" desc:"Show hidden files (starting with .)"`
+	AlmostAll bool `flag:"" desc:"Show almost all (exclude . and ..)"`
+	SortTime  bool `flag:"" desc:"Sort by modification time, newest first"`
+	Reverse   bool `flag:"" desc:"Reverse sort order"`
+	Recursive bool `flag:"" desc:"List subdirectories recursively"`
 	XML       bool
 	JSON      bool
 	Plain     bool
@@ -194,7 +195,7 @@ func listDir(inputPath string, cfg Config) (*LSResult, error) {
 	}
 
 	if !info.IsDir() {
-		entry, err := buildEntry(resolved.Absolute, info, filepath.Base(resolved.Absolute))
+		entry, err := buildEntry(resolved.Absolute, info, filepath.Base(resolved.Absolute), cfg)
 		if err != nil {
 			return &LSResult{
 				Path:      resolved.Given,
@@ -273,7 +274,7 @@ func populateDir(result *LSResult, dirPath string, cfg Config) error {
 	sortEntries(fileInfos, cfg)
 
 	for _, fe := range fileInfos {
-		entry, err := buildEntry(fe.path, fe.info, fe.name)
+		entry, err := buildEntry(fe.path, fe.info, fe.name, cfg)
 		if err != nil {
 			result.Errors = append(result.Errors, LSError{
 				Code: 1,
@@ -329,7 +330,7 @@ func sortEntries(entries []fsEntry, cfg Config) {
 	}
 }
 
-func buildEntry(fullPath string, info fs.FileInfo, name string) (LSItem, error) {
+func buildEntry(fullPath string, info fs.FileInfo, name string, cfg Config) (LSItem, error) {
 	mode := info.Mode()
 	modTime := info.ModTime().Unix()
 	perms := formatPermissions(mode, info.IsDir(), mode&fs.ModeSymlink != 0)
@@ -374,7 +375,7 @@ func buildEntry(fullPath string, info fs.FileInfo, name string) (LSItem, error) 
 	isBinary := true
 	language := ""
 
-	if size := info.Size(); size > 0 {
+	if size := info.Size(); size > 0 && !cfg.Plain {
 		mime, isBinary, _ = detect.DetectFromFile(fullPath)
 		if !isBinary {
 			language = detect.LanguageFromFile(fullPath)

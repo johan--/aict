@@ -15,6 +15,7 @@ import (
 
 func init() {
 	tool.Register("pwd", Run)
+	tool.RegisterMeta("pwd", tool.GenerateSchema("pwd", "Print current working directory", Config{}))
 }
 
 type Config struct {

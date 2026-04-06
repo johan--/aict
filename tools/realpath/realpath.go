@@ -14,6 +14,7 @@ import (
 
 func init() {
 	tool.Register("realpath", Run)
+	tool.RegisterMeta("realpath", tool.GenerateSchema("realpath", "Print resolved absolute paths", Config{}))
 }
 
 type Config struct {

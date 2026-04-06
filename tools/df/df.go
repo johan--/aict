@@ -13,10 +13,11 @@ import (
 
 func init() {
 	tool.Register("df", Run)
+	tool.RegisterMeta("df", tool.GenerateSchema("df", "Display disk filesystem usage statistics", Config{}))
 }
 
 type Config struct {
-	HumanSize bool
+	HumanSize bool `flag:"" desc:"Show sizes in human-readable format"`
 	XML       bool
 	JSON      bool
 	Plain     bool

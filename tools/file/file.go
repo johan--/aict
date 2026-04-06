@@ -16,11 +16,12 @@ import (
 
 func init() {
 	tool.Register("file", Run)
+	tool.RegisterMeta("file", tool.GenerateSchema("file", "Determine file type using MIME detection and content analysis", Config{}))
 }
 
 type Config struct {
-	Brief  bool
-	MIME   bool
+	Brief  bool `flag:"" desc:"Show brief file type only"`
+	MIME   bool `flag:"" desc:"Show MIME type only"`
 	XML    bool
 	JSON   bool
 	Plain  bool

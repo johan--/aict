@@ -25,6 +25,31 @@ func WriteXML(w io.Writer, v interface{}, pretty bool) error {
 	return enc.Encode(v)
 }
 
+func WriteXMLStream(w io.Writer, elementName string, items []string) error {
+	enc := xml.NewEncoder(w)
+
+	ts := os.Getenv("AICT_TIMESTAMP")
+	_, err := fmt.Fprintf(w, "<%s timestamp=\"%s\">", elementName, ts)
+	if err != nil {
+		return err
+	}
+
+	for _, item := range items {
+		err = enc.EncodeToken(xml.CharData(item))
+		if err != nil {
+			return err
+		}
+	}
+
+	err = enc.EncodeToken(xml.CharData([]byte("\n")))
+	if err != nil {
+		return err
+	}
+
+	_, err = fmt.Fprintf(w, "</%s>", elementName)
+	return err
+}
+
 func WriteJSON(w io.Writer, v interface{}) error {
 	data, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {

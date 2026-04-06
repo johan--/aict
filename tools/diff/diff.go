@@ -19,16 +19,17 @@ import (
 
 func init() {
 	tool.Register("diff", Run)
+	tool.RegisterMeta("diff", tool.GenerateSchema("diff", "Compare two files or directories and show differences", Config{}))
 }
 
 type Config struct {
-	Unified        bool
-	LabelOld       string
-	LabelNew       string
-	Recursive      bool
-	IgnoreAllSpace bool
-	Quiet          bool
-	Context        int
+	Unified        bool   `flag:"" desc:"Use unified diff format"`
+	LabelOld       string `flag:"" desc:"Label for old file in diff"`
+	LabelNew       string `flag:"" desc:"Label for new file in diff"`
+	Recursive      bool   `flag:"" desc:"Compare directories recursively"`
+	IgnoreAllSpace bool   `flag:"" desc:"Ignore all whitespace changes"`
+	Quiet          bool   `flag:"" desc:"Output only whether files differ"`
+	Context        int    `flag:"" desc:"Number of context lines"`
 	XML            bool
 	JSON           bool
 	Plain          bool
