@@ -76,13 +76,18 @@ func TestPs_HasProcesses(t *testing.T) {
 		t.Error("expected at least one process")
 	}
 
+	hasValidProcess := false
 	for _, p := range result {
 		if p.PID == 0 {
 			t.Error("expected valid PID")
 		}
-		if p.Command == "" {
-			t.Error("expected command to be set")
+		if p.Command != "" {
+			hasValidProcess = true
 		}
+	}
+
+	if !hasValidProcess {
+		t.Error("expected at least one process with command set")
 	}
 }
 

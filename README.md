@@ -2,6 +2,10 @@
 
 Your command line, but built for AI.
 
+## Disclaimer
+
+This project was built entirely by AI tools, for AI tools. Every line of code, every test, and every decision was made by an AI agent working with another AI agent. There were no human engineers writing code. If something breaks, an AI will fix it.
+
 ## The Problem
 
 AI agents run standard CLI tools to explore codebases, but the output is designed for humans. Parsing is brittle and error-prone.
@@ -123,7 +127,7 @@ docker run --rm -v $(pwd):/data aict ls /data
 
 ## Why This Exists
 
-We built AI coding agents that needed to read files, search codebases, and compare directories. Standard CLI tools output human-readable text. This gives you the same capabilities, but the output is unambiguous.
+AI coding agents need to read files, search codebases, and compare directories. Standard CLI tools output human-readable text. This gives you the same capabilities, but the output is unambiguous.
 
 ## Design Choices
 
